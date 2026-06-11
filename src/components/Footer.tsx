@@ -8,7 +8,7 @@ export default function Footer() {
     <Box component="footer" sx={{ py: 4, borderTop: '1px solid rgba(148, 163, 184, 0.1)' }}>
       <Container maxWidth="lg">
         <Typography variant="body2" color="text.secondary" textAlign="center">
-          © {year} {profile.name}. Tech Lead & Arquitecto de Soluciones.
+          © {year} {profile.name}. Tech Lead & Arquitecto de Soluciones y Desarrollador Senior Full-Stack .
         </Typography>
         <Divider sx={{ my: 2, borderColor: 'rgba(148, 163, 184, 0.08)' }} />
         <Typography variant="caption" color="text.secondary" display="block" textAlign="center">
