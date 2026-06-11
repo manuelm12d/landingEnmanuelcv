@@ -1,5 +1,4 @@
 import {
-  Avatar,
   Box,
   Button,
   Chip,
@@ -12,6 +11,7 @@ import EmailIcon from '@mui/icons-material/Email';
 import WorkHistoryIcon from '@mui/icons-material/WorkHistory';
 import { profile } from '../data/profile';
 import { gradientText } from '../theme/theme';
+import ProfileAvatar from './ProfileAvatar';
 
 export default function Hero() {
   const scrollTo = (id: string) => {
@@ -78,20 +78,8 @@ export default function Hero() {
           </Grid>
 
           <Grid size={{ xs: 12, md: 5 }}>
-            <Stack alignItems="center" spacing={3}>
-              <Avatar
-                sx={{
-                  width: { xs: 140, md: 180 },
-                  height: { xs: 140, md: 180 },
-                  fontSize: { xs: '3rem', md: '4rem' },
-                  fontWeight: 800,
-                  background: 'linear-gradient(135deg, #0284c7 0%, #6366f1 100%)',
-                  border: '4px solid rgba(56, 189, 248, 0.35)',
-                  boxShadow: '0 20px 40px rgba(56, 189, 248, 0.2)',
-                }}
-              >
-                ER
-              </Avatar>
+            <Stack alignItems="center" spacing={4} sx={{ pt: { xs: 2, md: 0 } }}>
+              <ProfileAvatar />
 
               <Box
                 sx={{
@@ -110,9 +98,26 @@ export default function Hero() {
                     textAlign: 'center',
                     background: 'rgba(17, 24, 39, 0.72)',
                     border: '1px solid rgba(148, 163, 184, 0.12)',
+                    transition: 'transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.35s ease, border-color 0.35s ease, background 0.35s ease',
+                    '@media (hover: hover)': {
+                      '&:hover': {
+                        transform: 'translateY(-10px) scale(1.02)',
+                        borderColor: 'rgba(56, 189, 248, 0.5)',
+                        background:
+                          'radial-gradient(circle at 50% 0%, rgba(56, 189, 248, 0.12) 0%, transparent 55%), radial-gradient(circle at 50% 100%, rgba(129, 140, 248, 0.1) 0%, transparent 50%), rgba(17, 24, 39, 0.95)',
+                        boxShadow:
+                          '0 20px 40px rgba(56, 189, 248, 0.22), 0 8px 24px rgba(129, 140, 248, 0.18), 0 0 0 1px rgba(192, 132, 252, 0.25)',
+                      },
+                      '&:hover .stat-value': {
+                        background: 'linear-gradient(135deg, #38bdf8 0%, #818cf8 50%, #c084fc 100%)',
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                        backgroundClip: 'text',
+                      },
+                    },
                   }}
                 >
-                  <Typography variant="h3" color="primary.main" fontWeight={800}>
+                  <Typography className="stat-value" variant="h3" color="primary.main" fontWeight={800} sx={{ transition: 'color 0.35s ease' }}>
                     {stat.value}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">

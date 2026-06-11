@@ -9,23 +9,30 @@ const requiredEnvVars = [
 
 export type FirebaseEnvVar = (typeof requiredEnvVars)[number];
 
-function getEnv(name: FirebaseEnvVar): string {
-  const value = import.meta.env[name];
-  if (!value) {
-    throw new Error(
-      `Falta la variable de entorno "${name}". ` +
-        'Configura .env.production o usa "vite --mode production" en desarrollo.',
-    );
-  }
-  return value;
+export interface FirebaseEnvConfig {
+  apiKey: string;
+  authDomain: string;
+  projectId: string;
+  storageBucket: string;
+  messagingSenderId: string;
+  appId: string;
+  measurementId?: string;
 }
 
-export const firebaseEnv = {
-  apiKey: getEnv('VITE_FIREBASE_API_KEY'),
-  authDomain: getEnv('VITE_FIREBASE_AUTH_DOMAIN'),
-  projectId: getEnv('VITE_FIREBASE_PROJECT_ID'),
-  storageBucket: getEnv('VITE_FIREBASE_STORAGE_BUCKET'),
-  messagingSenderId: getEnv('VITE_FIREBASE_MESSAGING_SENDER_ID'),
-  appId: getEnv('VITE_FIREBASE_APP_ID'),
-  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID || undefined,
-};
+export function isFirebaseConfigured(): boolean {
+  return requiredEnvVars.every((name) => Boolean(import.meta.env[name]));
+}
+
+export function getFirebaseEnv(): FirebaseEnvConfig | null {
+  if (!isFirebaseConfigured()) return null;
+
+  return {
+    apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+    authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+    storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+    appId: import.meta.env.VITE_FIREBASE_APP_ID,
+    measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID || undefined,
+  };
+}
