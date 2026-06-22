@@ -200,5 +200,6 @@ export const navItems = [
   { label: 'Habilidades', href: '#habilidades' },
   { label: 'Experiencia', href: '#experiencia' },
   { label: 'Educación', href: '#educacion' },
+  { label: 'Pac-Man', href: '#pacman' },
   { label: 'Contacto', href: '#contacto' },
 ];

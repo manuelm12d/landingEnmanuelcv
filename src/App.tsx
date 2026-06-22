@@ -5,6 +5,7 @@ import About from './components/About';
 import Skills from './components/Skills';
 import Experience from './components/Experience';
 import Education from './components/Education';
+import PacManSection from './components/pacman/PacManSection';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
 
@@ -17,6 +18,7 @@ export default function App() {
       <Skills />
       <Experience />
       <Education />
+      <PacManSection />
       <Contact />
       <Footer />
     </Box>

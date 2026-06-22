@@ -1,0 +1,23 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /pacman_scores/{scoreId} {
+      allow read: if true;
+      allow create: if
+        request.resource.data.keys().hasOnly(
+          ['playerName', 'score', 'levelReached', 'createdAt']
+        )
+        && request.resource.data.playerName is string
+        && request.resource.data.playerName.size() >= 2
+        && request.resource.data.playerName.size() <= 20
+        && request.resource.data.score is int
+        && request.resource.data.score >= 0
+        && request.resource.data.score <= 99999
+        && request.resource.data.levelReached is int
+        && request.resource.data.levelReached >= 1
+        && request.resource.data.levelReached <= 3
+        && request.resource.data.createdAt == request.time;
+      allow update, delete: if false;
+    }
+  }
+}

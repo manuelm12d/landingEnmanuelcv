@@ -1,5 +1,6 @@
 import { initializeApp, type FirebaseApp } from 'firebase/app';
 import { getAnalytics, type Analytics } from 'firebase/analytics';
+import { getFirestore, type Firestore } from 'firebase/firestore';
 import { getStorage, type FirebaseStorage } from 'firebase/storage';
 import { getFirebaseEnv } from '../config/env';
 
@@ -19,6 +20,9 @@ const firebaseConfig = firebaseEnv
 
 export const app: FirebaseApp | null = firebaseConfig ? initializeApp(firebaseConfig) : null;
 export const storage: FirebaseStorage | null = app ? getStorage(app) : null;
+export const db: Firestore | null = app
+  ? getFirestore(app, firebaseEnv?.databaseId ?? 'reyeslanding')
+  : null;
 
 let analyticsInstance: Analytics | null = null;
 
