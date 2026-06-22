@@ -32,7 +32,8 @@ export const profile = {
     phone: '+505 57930366',
     email: 'manuelmdd@gmail.com',
     location: 'De los semáforos del Rigoberto 1 c al sur, Managua, Nicaragua',
-    linkedin: 'https://www.linkedin.com/in/enmanuel-reyes-mdd2023/',
+    //linkedin: 'https://www.linkedin.com/in/enmanuel-reyes-mdd2023/',
+    linkedin: 'https://www.linkedin.com/in/enmanuel-reyes-mdd2023/?skipRedirect=true',
   },
   languages: [
     { name: 'Español', level: 'Nativo' },
