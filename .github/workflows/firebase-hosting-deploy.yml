@@ -1,4 +1,4 @@
-name: Deploy to Firebase Hosting
+name: Deploy to Firebase Hosting - Enmanuel de Jesus Reyes Molina
 
 on:
   push:

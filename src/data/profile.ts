@@ -23,7 +23,7 @@ export interface Education {
 }
 
 export const profile = {
-  name: 'Enmanuel de Jesús Reyes Molina',
+  name: 'Enmanuel de Jesus Reyes Molina',
   title: 'MSc. Ingeniero de Software',
   subtitle: 'Tech Lead & Arquitecto de Soluciones',
   summary:
