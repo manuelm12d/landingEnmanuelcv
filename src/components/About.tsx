@@ -1,40 +1,36 @@
-import { Box, Container, Grid2 as Grid, Paper, Stack, Typography } from '@mui/material';
+import { Box, Container, Grid2 as Grid, Stack, Typography } from '@mui/material';
+import AccountTreeOutlinedIcon from '@mui/icons-material/AccountTreeOutlined';
+import CloudOutlinedIcon from '@mui/icons-material/CloudOutlined';
+import BoltOutlinedIcon from '@mui/icons-material/BoltOutlined';
 import { profile } from '../data/profile';
-import { marioCard } from '../theme/theme';
+import { accent, fonts, glowCard, radialTint } from '../theme/theme';
+import { useThemeMode } from '../context/ThemeContext';
 import SectionTitle from './SectionTitle';
-import { useMarioTheme } from '../context/ThemeContext';
+import Reveal from './Reveal';
 
 const highlights = [
   {
-    emoji: '🏰',
-    title: 'Arquitectura Limpia',
+    Icon: AccountTreeOutlinedIcon,
+    title: 'Arquitectura limpia',
     description: 'SOLID, DDD, Feature First y separación de responsabilidades en cada proyecto.',
   },
   {
-    emoji: '☁️',
-    title: 'Cloud Multiplataforma',
+    Icon: CloudOutlinedIcon,
+    title: 'Cloud multiplataforma',
     description: 'AWS, Google Cloud y Azure con despliegues seguros, escalables y automatizados.',
   },
   {
-    emoji: '⭐',
-    title: 'Alto Rendimiento',
+    Icon: BoltOutlinedIcon,
+    title: 'Alto rendimiento',
     description: 'APIs optimizadas, microservicios, CI/CD y soluciones centradas en eficiencia.',
   },
 ];
 
 export default function About() {
-  const { mode } = useMarioTheme();
-  const isLight = mode === 'light';
+  const { tokens: t } = useThemeMode();
 
   return (
-    <Box
-      id="perfil"
-      component="section"
-      sx={{
-        py: { xs: 8, md: 12 },
-        bgcolor: isLight ? 'rgba(92,148,252,0.15)' : 'rgba(13,13,26,0.6)',
-      }}
-    >
+    <Box id="perfil" component="section" sx={{ py: { xs: 10, md: 14 }, borderTop: `1px solid ${t.border}` }}>
       <Container maxWidth="lg">
         <SectionTitle
           eyebrow="Perfil profesional"
@@ -42,96 +38,82 @@ export default function About() {
           subtitle="Formación de posgrado, liderazgo técnico y trayectoria en entornos exigentes."
         />
 
-        <Grid container spacing={4}>
+        <Grid container spacing={2}>
           <Grid size={{ xs: 12, lg: 7 }}>
-            <Paper
-              elevation={0}
-              sx={{
-                ...marioCard(isLight),
-                p: { xs: 3, md: 4 },
-              }}
-            >
-              <Typography
-                variant="body1"
-                color="text.secondary"
-                sx={{ lineHeight: 1.9, fontSize: '1.05rem', fontFamily: '"Roboto", sans-serif' }}
+            <Reveal sx={{ height: '100%' }}>
+              <Box
+                sx={{
+                  ...glowCard(t),
+                  backgroundImage: radialTint('0% 0%', 0.07),
+                  p: { xs: 3, md: 4 },
+                  height: '100%',
+                  display: 'flex',
+                  flexDirection: 'column',
+                }}
               >
-                {profile.summary}
-              </Typography>
+                <Typography sx={{ fontFamily: fonts.mono, fontSize: '0.75rem', color: t.subtle, mb: 2 }}>
+                  README.md
+                </Typography>
+                <Typography sx={{ color: t.muted, fontSize: '1.05rem', lineHeight: 1.85, flex: 1 }}>
+                  {profile.summary}
+                </Typography>
 
-              <Stack direction="row" flexWrap="wrap" gap={1} sx={{ mt: 3 }}>
-                {profile.languages.map((lang) => (
-                  <Box
-                    key={lang.name}
-                    sx={{
-                      px: 2,
-                      py: 1,
-                      bgcolor: '#FBD000',
-                      border: '2px solid #8B4513',
-                      boxShadow: '2px 2px 0 #5C2E0A',
-                    }}
-                  >
-                    <Typography
-                      variant="caption"
-                      sx={{ color: '#1A0A00', display: 'block', fontFamily: '"Press Start 2P", monospace', fontSize: '0.5rem' }}
+                <Stack direction="row" flexWrap="wrap" gap={1} sx={{ mt: 3, pt: 3, borderTop: `1px solid ${t.border}` }}>
+                  {profile.languages.map((lang) => (
+                    <Box
+                      key={lang.name}
+                      sx={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: 1,
+                        px: 1.25,
+                        py: 0.5,
+                        borderRadius: '6px',
+                        border: `1px solid ${t.border}`,
+                        fontFamily: fonts.mono,
+                        fontSize: '0.75rem',
+                      }}
                     >
-                      {lang.name}
-                    </Typography>
-                    <Typography
-                      variant="caption"
-                      sx={{ color: '#5C3317', display: 'block', fontFamily: '"Roboto", sans-serif', fontSize: '0.75rem' }}
-                    >
-                      {lang.level}
-                    </Typography>
-                  </Box>
-                ))}
-              </Stack>
-            </Paper>
+                      <Box component="span" sx={{ color: t.text }}>{lang.name}</Box>
+                      <Box component="span" sx={{ color: accent.main }}>{lang.level}</Box>
+                    </Box>
+                  ))}
+                </Stack>
+              </Box>
+            </Reveal>
           </Grid>
 
           <Grid size={{ xs: 12, lg: 5 }}>
-            <Stack spacing={2}>
-              {highlights.map((item) => (
-                <Paper
-                  key={item.title}
-                  elevation={0}
-                  sx={{
-                    ...marioCard(isLight),
-                    p: 3,
-                    transition: 'transform 0.15s ease',
-                    '&:hover': { transform: 'translateY(-4px)' },
-                  }}
-                >
-                  <Stack direction="row" spacing={2} alignItems="flex-start">
-                    <Typography
-                      sx={{ fontSize: '1.8rem', lineHeight: 1, flexShrink: 0 }}
-                      aria-hidden
+            <Stack spacing={2} sx={{ height: '100%' }}>
+              {highlights.map(({ Icon, title, description }, i) => (
+                <Reveal key={title} delay={i * 90} sx={{ flex: 1 }}>
+                  <Box sx={{ ...glowCard(t), p: 3, height: '100%', display: 'flex', gap: 2 }}>
+                    <Box
+                      sx={{
+                        width: 40,
+                        height: 40,
+                        flexShrink: 0,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        borderRadius: '10px',
+                        border: `1px solid ${t.border}`,
+                        bgcolor: accent.soft,
+                        color: accent.hover,
+                      }}
                     >
-                      {item.emoji}
-                    </Typography>
+                      <Icon sx={{ fontSize: 20 }} />
+                    </Box>
                     <Box>
-                      <Typography
-                        variant="h6"
-                        gutterBottom
-                        sx={{
-                          color: isLight ? '#1A0A00' : '#F5F5F5',
-                          textShadow: isLight ? '1px 1px 0 #C8821A' : '1px 1px 0 #E52521',
-                          fontSize: '0.65rem',
-                          mb: 1,
-                        }}
-                      >
-                        {item.title}
+                      <Typography variant="h6" sx={{ fontSize: '1rem', color: t.text, mb: 0.5 }}>
+                        {title}
                       </Typography>
-                      <Typography
-                        variant="body2"
-                        color="text.secondary"
-                        sx={{ fontFamily: '"Roboto", sans-serif' }}
-                      >
-                        {item.description}
+                      <Typography variant="body2" sx={{ color: t.muted }}>
+                        {description}
                       </Typography>
                     </Box>
-                  </Stack>
-                </Paper>
+                  </Box>
+                </Reveal>
               ))}
             </Stack>
           </Grid>

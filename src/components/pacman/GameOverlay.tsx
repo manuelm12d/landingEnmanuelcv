@@ -7,6 +7,7 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
+import { alpha } from '@mui/material/styles';
 import type { GameSnapshot } from '../../game/pacman';
 import { isLeaderboardAvailable, submitScore, validatePlayerName } from '../../services/leaderboardService';
 
@@ -91,8 +92,9 @@ export default function GameOverlay({
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        bgcolor: 'rgba(0, 0, 0, 0.75)',
-        borderRadius: 3,
+        bgcolor: (theme) => alpha(theme.palette.background.default, 0.88),
+        backdropFilter: 'blur(4px)',
+        borderRadius: 2,
         zIndex: 2,
       }}
     >

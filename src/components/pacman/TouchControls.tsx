@@ -12,13 +12,14 @@ interface TouchControlsProps {
 }
 
 const btnSx = {
-  bgcolor: 'rgba(17, 24, 39, 0.9)',
-  border: '1px solid rgba(148, 163, 184, 0.2)',
-  color: 'primary.main',
+  bgcolor: 'background.default',
+  border: '1px solid',
+  borderColor: 'divider',
+  color: 'text.primary',
   width: 52,
   height: 52,
   touchAction: 'none',
-  '&:active': { bgcolor: 'rgba(56, 189, 248, 0.2)' },
+  '&:active': { bgcolor: 'rgba(37, 99, 235, 0.2)', borderColor: 'primary.main' },
 };
 
 export default function TouchControls({ onDirection, disabled }: TouchControlsProps) {

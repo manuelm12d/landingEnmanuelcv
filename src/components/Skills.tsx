@@ -1,156 +1,198 @@
-import { Box, Container, Grid2 as Grid, Paper, Typography } from '@mui/material';
-import { skillCategories } from '../data/profile';
-import { marioCard } from '../theme/theme';
+import { Box, Container, Typography } from '@mui/material';
+import { experiences, skillCategories, type SkillCategory } from '../data/profile';
+import { accent, fonts, glowCard, radialTint, type Tokens } from '../theme/theme';
+import { useThemeMode } from '../context/ThemeContext';
+import { useScrollAnimation } from '../hooks/useScrollAnimation';
+import { useCountUp } from '../hooks/useCountUp';
 import SectionTitle from './SectionTitle';
-import { useMarioTheme } from '../context/ThemeContext';
+import Reveal from './Reveal';
 
-function TechIcon({ name, icon }: { name: string; icon: string }) {
+// Tamaño de cada tarjeta en el bento (columnas x filas sobre una grilla de 4 columnas)
+const LAYOUT: Record<string, { cols: number; rows: number; tint: string }> = {
+  Backend: { cols: 2, rows: 2, tint: '0% 0%' },
+  'Cloud Computing': { cols: 2, rows: 1, tint: '100% 0%' },
+  'DevOps & CI/CD': { cols: 2, rows: 1, tint: '100% 100%' },
+  'Bases de Datos': { cols: 2, rows: 1, tint: '0% 100%' },
+  Frontend: { cols: 1, rows: 1, tint: '50% 0%' },
+  'Móvil': { cols: 1, rows: 1, tint: '50% 0%' },
+  'Gestión Técnica': { cols: 2, rows: 1, tint: '100% 50%' },
+};
+
+const DESCRIPTIONS: Record<string, string> = {
+  Backend: 'APIs RESTful, microservicios y servicios empresariales con arquitectura limpia, DDD y principios SOLID.',
+};
+
+const DARK_ICONS = ['GitHub Actions'];
+
+function span(cols: number, rows: number) {
+  return {
+    gridColumn: { xs: 'span 1', sm: `span ${Math.min(cols, 2)}`, md: `span ${cols}` },
+    gridRow: { md: `span ${rows}` },
+  };
+}
+
+function CategoryCard({ category, t, index }: { category: SkillCategory; t: Tokens; index: number }) {
+  const layout = LAYOUT[category.title] ?? { cols: 1, rows: 1, tint: '0% 0%' };
+  const isLarge = layout.rows > 1;
+
   return (
-    <Box
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        gap: 1,
-        p: 1.5,
-        cursor: 'default',
-        transition: 'transform 0.2s ease',
-        '&:hover': {
-          transform: 'translateY(-6px) scale(1.1)',
-          animation: 'mario-bounce 0.5s ease',
-        },
-      }}
-    >
+    <Reveal delay={index * 60} sx={span(layout.cols, layout.rows)}>
       <Box
-        component="img"
-        src={icon}
-        alt={`Logo de ${name}`}
-        loading="lazy"
         sx={{
-          width: 52,
-          height: 52,
-          objectFit: 'contain',
-          filter: 'drop-shadow(2px 2px 0 rgba(0,0,0,0.4))',
-          imageRendering: 'pixelated',
-        }}
-        onError={(e) => {
-          const target = e.currentTarget as HTMLImageElement;
-          target.style.display = 'none';
-        }}
-      />
-      <Typography
-        variant="caption"
-        sx={{
-          fontFamily: '"Press Start 2P", monospace',
-          fontSize: '0.4rem',
-          textAlign: 'center',
-          lineHeight: 1.4,
-          color: 'text.primary',
+          ...glowCard(t),
+          backgroundImage: radialTint(layout.tint, t.isDark ? 0.09 : 0.06),
+          p: { xs: 2.5, md: 3 },
+          height: '100%',
+          display: 'flex',
+          flexDirection: 'column',
         }}
       >
-        {name}
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', mb: 2.5 }}>
+          <Typography variant="h6" sx={{ fontSize: isLarge ? '1.25rem' : '1rem', color: t.text }}>
+            {category.title}
+          </Typography>
+          <Typography sx={{ fontFamily: fonts.mono, fontSize: '0.72rem', color: t.subtle }}>
+            {String(category.skills.length).padStart(2, '0')}
+          </Typography>
+        </Box>
+        {isLarge && DESCRIPTIONS[category.title] && (
+          <Typography sx={{ color: t.muted, fontSize: '0.95rem', maxWidth: 420, mt: -1, mb: 3 }}>
+            {DESCRIPTIONS[category.title]}
+          </Typography>
+        )}
+
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: isLarge ? 'repeat(auto-fill, minmax(140px, 1fr))' : 'repeat(auto-fill, minmax(120px, 1fr))',
+            gap: 1,
+            mt: 'auto',
+          }}
+        >
+          {category.skills.map((skill) => (
+            <Box
+              key={skill.name}
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 1.25,
+                px: 1.25,
+                py: isLarge ? 1.25 : 1,
+                borderRadius: '8px',
+                border: `1px solid ${t.border}`,
+                bgcolor: t.isDark ? 'rgba(255,255,255,0.02)' : 'rgba(255,255,255,0.8)',
+                transition: 'border-color .2s ease, background-color .2s ease',
+                '&:hover': { borderColor: t.borderStrong, bgcolor: t.surfaceHover },
+              }}
+            >
+              <Box
+                component="img"
+                src={skill.icon}
+                alt=""
+                loading="lazy"
+                sx={{
+                  width: isLarge ? 22 : 18,
+                  height: isLarge ? 22 : 18,
+                  objectFit: 'contain',
+                  flexShrink: 0,
+                  filter: t.isDark && DARK_ICONS.includes(skill.name) ? 'invert(1)' : 'none',
+                }}
+                onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
+              />
+              <Typography sx={{ fontSize: '0.82rem', color: t.text, fontWeight: 500, lineHeight: 1.25 }}>
+                {skill.name}
+              </Typography>
+            </Box>
+          ))}
+        </Box>
+      </Box>
+    </Reveal>
+  );
+}
+
+function Metric({ value, label, start }: { value: string; label: string; start: boolean }) {
+  const { tokens: t } = useThemeMode();
+  const display = useCountUp(value, start);
+  return (
+    <Box>
+      <Typography sx={{ fontSize: { xs: '1.75rem', md: '2rem' }, fontWeight: 700, letterSpacing: '-0.04em', color: t.text, lineHeight: 1.1, fontVariantNumeric: 'tabular-nums' }}>
+        {display}
       </Typography>
+      <Typography sx={{ fontSize: '0.78rem', color: t.muted, mt: 0.5 }}>{label}</Typography>
     </Box>
   );
 }
 
-export default function Skills() {
-  const { mode } = useMarioTheme();
-  const isLight = mode === 'light';
+function MetricsCard({ t }: { t: Tokens }) {
+  const { ref, visible } = useScrollAnimation(0.3);
+  const totalSkills = skillCategories.reduce((sum, c) => sum + c.skills.length, 0);
+  const metrics = [
+    { value: `${totalSkills}+`, label: 'Tecnologías' },
+    { value: String(skillCategories.length), label: 'Áreas' },
+    { value: String(experiences.length), label: 'Empresas' },
+  ];
 
   return (
-    <Box
-      id="habilidades"
-      component="section"
-      sx={{
-        py: { xs: 8, md: 12 },
-        bgcolor: isLight ? 'rgba(76,175,34,0.15)' : 'rgba(26,26,46,0.6)',
-        position: 'relative',
-        overflow: 'hidden',
-      }}
-    >
-      {/* Decoración de tubería */}
+    <Reveal sx={span(2, 1)}>
       <Box
-        aria-hidden
+        ref={ref}
         sx={{
-          position: 'absolute',
-          bottom: 0,
-          right: 20,
-          width: 48,
-          height: 80,
-          bgcolor: '#4CAF22',
-          border: '4px solid #2E7D32',
-          boxShadow: '4px 0 0 #1B5E20, -4px 0 0 #1B5E20',
-          display: { xs: 'none', md: 'block' },
+          ...glowCard(t),
+          p: { xs: 2.5, md: 3 },
+          height: '100%',
+          overflow: 'hidden',
+          background: t.isDark
+            ? `linear-gradient(135deg, rgba(37,99,235,0.16) 0%, ${t.surface} 60%)`
+            : `linear-gradient(135deg, rgba(37,99,235,0.10) 0%, ${t.surface} 60%)`,
+          borderColor: accent.soft,
         }}
-      />
-      <Box
-        aria-hidden
-        sx={{
-          position: 'absolute',
-          bottom: 76,
-          right: 10,
-          width: 68,
-          height: 20,
-          bgcolor: '#4CAF22',
-          border: '4px solid #2E7D32',
-          display: { xs: 'none', md: 'block' },
-        }}
-      />
+      >
+        <Typography sx={{ fontFamily: fonts.mono, fontSize: '0.72rem', color: accent.hover, mb: 2.5 }}>
+          $ stack --stats
+        </Typography>
+        <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 2 }}>
+          {metrics.map((m) => (
+            <Metric key={m.label} value={m.value} label={m.label} start={visible} />
+          ))}
+        </Box>
+      </Box>
+    </Reveal>
+  );
+}
 
-      <Container maxWidth="lg" sx={{ position: 'relative' }}>
+export default function Skills() {
+  const { tokens: t } = useThemeMode();
+  const ordered = Object.keys(LAYOUT)
+    .map((title) => skillCategories.find((c) => c.title === title))
+    .filter((c): c is SkillCategory => Boolean(c));
+  const rest = skillCategories.filter((c) => !LAYOUT[c.title]);
+  const [first, second, third, ...others] = [...ordered, ...rest];
+
+  return (
+    <Box id="habilidades" component="section" sx={{ py: { xs: 10, md: 14 }, borderTop: `1px solid ${t.border}` }}>
+      <Container maxWidth="lg">
         <SectionTitle
           eyebrow="Stack tecnológico"
           title="Habilidades y tecnologías dominadas"
           subtitle="Experiencia práctica en cloud, DevOps, backend, frontend, móvil y bases de datos."
         />
 
-        <Grid container spacing={3}>
-          {skillCategories.map((category) => (
-            <Grid key={category.title} size={{ xs: 12, sm: 6, lg: 4 }}>
-              <Paper
-                elevation={0}
-                sx={{
-                  ...marioCard(isLight),
-                  p: 3,
-                  height: '100%',
-                }}
-              >
-                {/* Título de categoría estilo panel Mario */}
-                <Box
-                  sx={{
-                    bgcolor: '#E52521',
-                    mx: -3,
-                    mt: -3,
-                    mb: 2.5,
-                    px: 2,
-                    py: 1,
-                    borderBottom: '3px solid #8B0000',
-                  }}
-                >
-                  <Typography
-                    variant="h6"
-                    sx={{
-                      color: '#FFFFFF',
-                      textShadow: '2px 2px 0 #5C0000',
-                      fontSize: '0.6rem',
-                    }}
-                  >
-                    ► {category.title}
-                  </Typography>
-                </Box>
-
-                <Grid container spacing={1}>
-                  {category.skills.map((skill) => (
-                    <Grid key={skill.name} size={{ xs: 6, sm: category.skills.length === 1 ? 12 : 6 }}>
-                      <TechIcon name={skill.name} icon={skill.icon} />
-                    </Grid>
-                  ))}
-                </Grid>
-              </Paper>
-            </Grid>
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' },
+            gridAutoFlow: 'row dense',
+            gap: 2,
+          }}
+        >
+          {[first, second, third].filter(Boolean).map((c, i) => (
+            <CategoryCard key={c.title} category={c} t={t} index={i} />
           ))}
-        </Grid>
+          <MetricsCard t={t} />
+          {others.map((c, i) => (
+            <CategoryCard key={c.title} category={c} t={t} index={i + 4} />
+          ))}
+        </Box>
       </Container>
     </Box>
   );

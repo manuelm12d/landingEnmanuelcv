@@ -1,23 +1,17 @@
-import { Box, Container, Grid2 as Grid, Paper, Stack, Typography } from '@mui/material';
+import { Box, Container, Grid2 as Grid, Stack, Typography } from '@mui/material';
+import SchoolOutlinedIcon from '@mui/icons-material/SchoolOutlined';
 import { education } from '../data/profile';
-import { marioCard } from '../theme/theme';
+import { accent, fonts, glowCard, radialTint } from '../theme/theme';
+import { useThemeMode } from '../context/ThemeContext';
 import SectionTitle from './SectionTitle';
 import MomentsCarousel from './MomentsCarousel';
-import { useMarioTheme } from '../context/ThemeContext';
+import Reveal from './Reveal';
 
 export default function Education() {
-  const { mode } = useMarioTheme();
-  const isLight = mode === 'light';
+  const { tokens: t } = useThemeMode();
 
   return (
-    <Box
-      id="educacion"
-      component="section"
-      sx={{
-        py: { xs: 8, md: 12 },
-        bgcolor: isLight ? 'rgba(76,175,34,0.1)' : 'rgba(26,26,46,0.5)',
-      }}
-    >
+    <Box id="educacion" component="section" sx={{ py: { xs: 10, md: 14 }, borderTop: `1px solid ${t.border}` }}>
       <Container maxWidth="lg">
         <SectionTitle
           eyebrow="Formación académica"
@@ -25,74 +19,66 @@ export default function Education() {
           subtitle="Formación universitaria y posgrado en ingeniería de software."
         />
 
-        <Grid container spacing={3} alignItems="stretch">
+        <Grid container spacing={2} alignItems="stretch">
           <Grid size={{ xs: 12, lg: 7 }}>
-            <Stack spacing={3} sx={{ height: '100%' }}>
+            <Stack spacing={2} sx={{ height: '100%' }}>
               {education.map((item, index) => (
-                <Paper
-                  key={item.degree}
-                  elevation={0}
-                  sx={{
-                    ...marioCard(isLight),
-                    p: 4,
-                    flex: 1,
-                    borderLeft: '6px solid #FBD000',
-                    transition: 'transform 0.15s ease',
-                    '&:hover': { transform: 'translateY(-4px)' },
-                  }}
-                >
-                  {/* Icono castillo */}
-                  <Typography sx={{ fontSize: '2rem', mb: 1.5, lineHeight: 1 }} aria-hidden>
-                    {index === 0 ? '🏰' : '🎓'}
-                  </Typography>
-
-                  {/* Periodo — LEVEL COMPLETE */}
+                <Reveal key={item.degree} delay={index * 90} sx={{ flex: 1 }}>
                   <Box
                     sx={{
-                      display: 'inline-block',
-                      bgcolor: '#FBD000',
-                      color: '#1A0A00',
-                      px: 1.5,
-                      py: 0.5,
-                      mb: 1.5,
-                      border: '2px solid #8B4513',
-                      boxShadow: '2px 2px 0 #5C2E0A',
+                      ...glowCard(t),
+                      backgroundImage: index === 0 ? radialTint('100% 0%', 0.08) : 'none',
+                      p: { xs: 3, md: 4 },
+                      height: '100%',
                     }}
                   >
-                    <Typography
-                      variant="caption"
-                      sx={{ fontFamily: '"Press Start 2P", monospace', fontSize: '0.45rem' }}
-                    >
-                      ★ LEVEL COMPLETE: {item.period}
+                    <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 3 }}>
+                      <Box
+                        sx={{
+                          width: 40,
+                          height: 40,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          borderRadius: '10px',
+                          border: `1px solid ${t.border}`,
+                          bgcolor: accent.soft,
+                          color: accent.hover,
+                        }}
+                      >
+                        <SchoolOutlinedIcon sx={{ fontSize: 20 }} />
+                      </Box>
+                      <Box
+                        sx={{
+                          fontFamily: fonts.mono,
+                          fontSize: '0.72rem',
+                          color: t.muted,
+                          px: 1,
+                          py: 0.25,
+                          borderRadius: '999px',
+                          border: `1px solid ${t.border}`,
+                        }}
+                      >
+                        {item.period}
+                      </Box>
+                    </Stack>
+
+                    <Typography variant="h5" component="h3" sx={{ fontSize: { xs: '1.1rem', md: '1.25rem' }, color: t.text, mb: 1 }}>
+                      {item.degree}
+                    </Typography>
+                    <Typography variant="body2" sx={{ color: t.muted }}>
+                      {item.institution}
                     </Typography>
                   </Box>
-
-                  <Typography
-                    variant="h5"
-                    sx={{
-                      mt: 1,
-                      mb: 1.5,
-                      color: isLight ? '#1A0A00' : '#F5F5F5',
-                      fontSize: { xs: '0.7rem', md: '0.8rem' },
-                      lineHeight: 1.8,
-                    }}
-                  >
-                    {item.degree}
-                  </Typography>
-                  <Typography
-                    variant="body1"
-                    color="text.secondary"
-                    sx={{ fontFamily: '"Roboto", sans-serif' }}
-                  >
-                    {item.institution}
-                  </Typography>
-                </Paper>
+                </Reveal>
               ))}
             </Stack>
           </Grid>
 
           <Grid size={{ xs: 12, lg: 5 }}>
-            <MomentsCarousel />
+            <Reveal delay={180} sx={{ height: '100%' }}>
+              <MomentsCarousel />
+            </Reveal>
           </Grid>
         </Grid>
       </Container>

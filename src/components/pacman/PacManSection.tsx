@@ -1,7 +1,8 @@
 import { useCallback, useRef, useState } from 'react';
-import { Box, Container, Grid2 as Grid, Paper } from '@mui/material';
+import { Box, Container, Grid2 as Grid } from '@mui/material';
 import SectionTitle from '../SectionTitle';
-import { glassCard } from '../../theme/theme';
+import { surfaceCard } from '../../theme/theme';
+import { useThemeMode } from '../../context/ThemeContext';
 import type { Game } from '../../game/pacman';
 import { type GameSnapshot } from '../../game/pacman';
 import GameCanvas from './GameCanvas';
@@ -20,6 +21,7 @@ const INITIAL_SNAPSHOT: GameSnapshot = {
 };
 
 export default function PacManSection() {
+  const { tokens: t } = useThemeMode();
   const sectionRef = useRef<HTMLElement>(null);
   const gameRef = useRef<Game | null>(null);
   const [snapshot, setSnapshot] = useState<GameSnapshot>(INITIAL_SNAPSHOT);
@@ -69,8 +71,8 @@ export default function PacManSection() {
       component="section"
       ref={sectionRef}
       sx={{
-        py: { xs: 8, md: 12 },
-        bgcolor: 'rgba(17, 24, 39, 0.35)',
+        py: { xs: 10, md: 14 },
+        borderTop: `1px solid ${t.border}`,
       }}
     >
       <Container maxWidth="lg">
@@ -81,15 +83,12 @@ export default function PacManSection() {
           align="center"
         />
 
-        <Grid container spacing={3} justifyContent="center">
+        <Grid container spacing={2} justifyContent="center">
           <Grid size={{ xs: 12, lg: 7 }}>
-            <Paper
-              elevation={0}
+            <Box
               sx={{
-                ...glassCard,
+                ...surfaceCard(t),
                 p: { xs: 2, md: 3 },
-                borderRadius: 4,
-                position: 'relative',
               }}
             >
               <GameHUD snapshot={snapshot} onPause={handlePause} />
@@ -108,7 +107,7 @@ export default function PacManSection() {
                 />
               </Box>
               <TouchControls onDirection={handleDirection} disabled={controlsDisabled} />
-            </Paper>
+            </Box>
           </Grid>
 
           <Grid size={{ xs: 12, lg: 5 }}>

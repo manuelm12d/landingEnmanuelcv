@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   AppBar,
   Box,
@@ -10,7 +10,6 @@ import {
   ListItem,
   ListItemButton,
   ListItemText,
-  Toolbar,
   Tooltip,
   Typography,
   useMediaQuery,
@@ -18,27 +17,72 @@ import {
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseIcon from '@mui/icons-material/Close';
-import Brightness7Icon from '@mui/icons-material/Brightness7';
-import Brightness4Icon from '@mui/icons-material/Brightness4';
+import LightModeOutlinedIcon from '@mui/icons-material/LightModeOutlined';
+import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined';
 import { navItems } from '../data/profile';
-import { useMarioTheme } from '../context/ThemeContext';
+import { useThemeMode } from '../context/ThemeContext';
+import { accent, fonts } from '../theme/theme';
+
+function Logo({ onClick }: { onClick: () => void }) {
+  const { tokens: t } = useThemeMode();
+  return (
+    <Box
+      component="button"
+      type="button"
+      onClick={onClick}
+      aria-label="Ir al inicio"
+      sx={{
+        all: 'unset',
+        cursor: 'pointer',
+        fontFamily: fonts.mono,
+        fontWeight: 500,
+        fontSize: '0.95rem',
+        color: t.text,
+        letterSpacing: '-0.02em',
+        '& .bracket': { color: t.subtle, transition: 'color .2s ease' },
+        '&:hover .bracket': { color: accent.main },
+      }}
+    >
+      <span className="bracket">&lt;</span>ER<span className="bracket"> /&gt;</span>
+    </Box>
+  );
+}
 
 export default function Navbar() {
-  const [open, setOpen] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const muiTheme = useTheme();
   const isMobile = useMediaQuery(muiTheme.breakpoints.down('md'));
-  const { mode, toggleTheme } = useMarioTheme();
-  const isLight = mode === 'light';
+  const { mode, tokens: t, toggleTheme } = useThemeMode();
+  const isDark = mode === 'dark';
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 12);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
   const handleNav = (href: string) => {
-    setOpen(false);
-    const element = document.querySelector(href);
-    element?.scrollIntoView({ behavior: 'smooth' });
+    setDrawerOpen(false);
+    document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  const navBg = isLight
-    ? 'rgba(229, 37, 33, 0.97)'
-    : 'rgba(139, 0, 0, 0.97)';
+  const links = navItems.filter((item) => item.href !== '#contacto');
+  const contact = navItems.find((item) => item.href === '#contacto');
+
+  const themeToggle = (
+    <Tooltip title={isDark ? 'Modo claro' : 'Modo oscuro'}>
+      <IconButton
+        onClick={toggleTheme}
+        size="small"
+        aria-label={isDark ? 'Activar modo claro' : 'Activar modo oscuro'}
+        sx={{ color: t.muted, border: `1px solid ${t.border}`, p: '6px', '&:hover': { color: t.text } }}
+      >
+        {isDark ? <LightModeOutlinedIcon sx={{ fontSize: 16 }} /> : <DarkModeOutlinedIcon sx={{ fontSize: 16 }} />}
+      </IconButton>
+    </Tooltip>
+  );
 
   return (
     <>
@@ -46,189 +90,108 @@ export default function Navbar() {
         position="fixed"
         elevation={0}
         sx={{
-          bgcolor: navBg,
-          borderBottom: '4px solid #FBD000',
-          boxShadow: '0 4px 0 #8B4513',
-          backgroundImage: 'none',
+          bgcolor: scrolled ? (isDark ? 'rgba(9,9,11,0.72)' : 'rgba(255,255,255,0.72)') : 'transparent',
+          backdropFilter: scrolled ? 'saturate(180%) blur(12px)' : 'none',
+          WebkitBackdropFilter: scrolled ? 'saturate(180%) blur(12px)' : 'none',
+          borderBottom: `1px solid ${scrolled ? t.border : 'transparent'}`,
+          transition: 'background-color .25s ease, border-color .25s ease, backdrop-filter .25s ease',
         }}
       >
         <Container maxWidth="lg">
-          <Toolbar disableGutters sx={{ justifyContent: 'space-between', py: 0.5 }}>
-            {/* Logo */}
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              <Typography
-                sx={{
-                  fontSize: { xs: '1.2rem', sm: '1.4rem' },
-                  lineHeight: 1,
-                  filter: 'drop-shadow(2px 2px 0 #8B0000)',
-                  cursor: 'default',
-                  userSelect: 'none',
-                }}
-                aria-hidden
-              >
-                🍄
-              </Typography>
-              <Typography
-                variant="caption"
-                sx={{
-                  display: { xs: 'none', sm: 'block' },
-                  color: '#FBD000',
-                  textShadow: '2px 2px 0 #8B0000',
-                  fontSize: '0.6rem',
-                  letterSpacing: '0.05em',
-                }}
-              >
-                E. REYES
-              </Typography>
-            </Box>
+          <Box sx={{ height: 64, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <Logo onClick={() => handleNav('#inicio')} />
 
-            {/* Desktop Nav */}
             {!isMobile && (
-              <Box sx={{ display: 'flex', gap: 0.5, alignItems: 'center' }}>
-                {navItems.map((item) => (
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                {links.map((item) => (
                   <Button
                     key={item.href}
-                    variant={item.href === '#contacto' ? 'contained' : 'text'}
+                    variant="text"
+                    size="small"
                     onClick={() => handleNav(item.href)}
-                    sx={
-                      item.href === '#contacto'
-                        ? {
-                            bgcolor: '#FBD000',
-                            color: '#1A0A00',
-                            border: '2px solid #8B4513',
-                            boxShadow: '0 3px 0 #8B4513',
-                            fontSize: '0.5rem',
-                            px: 1.5,
-                            '&:hover': {
-                              bgcolor: '#FFE566',
-                              transform: 'translateY(-2px)',
-                              boxShadow: '0 5px 0 #8B4513',
-                            },
-                          }
-                        : {
-                            color: '#FFFFFF',
-                            fontSize: '0.5rem',
-                            px: 1,
-                            '&:hover': {
-                              bgcolor: 'rgba(251,208,0,0.2)',
-                              color: '#FBD000',
-                            },
-                          }
-                    }
+                    sx={{ color: t.muted, fontSize: '0.85rem', px: 1.5, '&:hover': { color: t.text } }}
                   >
                     {item.label}
                   </Button>
                 ))}
-
-                {/* Toggle tema */}
-                <Tooltip title={isLight ? 'Modo Noche 🌙' : 'Modo Día ☀️'}>
-                  <IconButton
-                    onClick={toggleTheme}
-                    sx={{
-                      ml: 1,
-                      color: '#FBD000',
-                      border: '2px solid #FBD000',
-                      p: '6px',
-                      '&:hover': { bgcolor: 'rgba(251,208,0,0.2)' },
-                    }}
-                    aria-label={isLight ? 'Activar modo oscuro' : 'Activar modo claro'}
+                <Box sx={{ width: '1px', height: 20, bgcolor: t.border, mx: 1.5 }} />
+                {themeToggle}
+                {contact && (
+                  <Button
+                    variant="contained"
+                    size="small"
+                    onClick={() => handleNav(contact.href)}
+                    sx={{ ml: 1.5, boxShadow: `0 0 12px ${accent.glow}` }}
                   >
-                    {isLight ? <Brightness4Icon fontSize="small" /> : <Brightness7Icon fontSize="small" />}
-                  </IconButton>
-                </Tooltip>
+                    Contactar
+                  </Button>
+                )}
               </Box>
             )}
 
-            {/* Mobile: toggle + hamburger */}
             {isMobile && (
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <Tooltip title={isLight ? 'Modo Noche' : 'Modo Día'}>
-                  <IconButton
-                    onClick={toggleTheme}
-                    size="small"
-                    sx={{ color: '#FBD000', border: '2px solid #FBD000', p: '4px' }}
-                    aria-label={isLight ? 'Activar modo oscuro' : 'Activar modo claro'}
-                  >
-                    {isLight ? <Brightness4Icon fontSize="small" /> : <Brightness7Icon fontSize="small" />}
-                  </IconButton>
-                </Tooltip>
-                <IconButton color="inherit" onClick={() => setOpen(true)} aria-label="Abrir menú">
-                  <MenuIcon />
+                {themeToggle}
+                <IconButton
+                  onClick={() => setDrawerOpen(true)}
+                  size="small"
+                  aria-label="Abrir menú"
+                  sx={{ color: t.text, border: `1px solid ${t.border}`, p: '6px' }}
+                >
+                  <MenuIcon sx={{ fontSize: 18 }} />
                 </IconButton>
               </Box>
             )}
-          </Toolbar>
+          </Box>
         </Container>
       </AppBar>
 
-      {/* Drawer Mobile */}
-      <Drawer anchor="right" open={open} onClose={() => setOpen(false)}>
-        <Box
-          sx={{
-            width: 280,
-            height: '100%',
-            bgcolor: isLight ? '#8B0000' : '#1A0A1A',
-            borderLeft: '4px solid #FBD000',
-          }}
-        >
-          <Box sx={{ display: 'flex', justifyContent: 'flex-end', p: 1 }}>
-            <IconButton
-              onClick={() => setOpen(false)}
-              sx={{ color: '#FBD000' }}
-              aria-label="Cerrar menú"
-            >
-              <CloseIcon />
+      <Drawer anchor="right" open={drawerOpen} onClose={() => setDrawerOpen(false)}>
+        <Box sx={{ width: 280, height: '100%', display: 'flex', flexDirection: 'column' }}>
+          <Box
+            sx={{
+              height: 64,
+              px: 2.5,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              borderBottom: `1px solid ${t.border}`,
+            }}
+          >
+            <Logo onClick={() => handleNav('#inicio')} />
+            <IconButton onClick={() => setDrawerOpen(false)} aria-label="Cerrar menú" size="small" sx={{ color: t.muted }}>
+              <CloseIcon fontSize="small" />
             </IconButton>
           </Box>
 
-          {/* Logo en drawer */}
-          <Box sx={{ px: 3, pb: 2, borderBottom: '2px solid #FBD000' }}>
-            <Typography sx={{ fontSize: '1.5rem' }}>🍄</Typography>
-            <Typography variant="caption" sx={{ color: '#FBD000', display: 'block', mt: 0.5 }}>
-              E. REYES PORTFOLIO
-            </Typography>
-          </Box>
-
-          <List sx={{ pt: 1 }}>
-            {navItems.map((item) => (
+          <List sx={{ p: 1.5, flex: 1 }}>
+            {links.map((item) => (
               <ListItem key={item.href} disablePadding>
                 <ListItemButton
                   onClick={() => handleNav(item.href)}
-                  sx={
-                    item.href === '#contacto'
-                      ? {
-                          mx: 2,
-                          my: 1,
-                          bgcolor: '#FBD000',
-                          color: '#1A0A00',
-                          border: '2px solid #8B4513',
-                          '&:hover': { bgcolor: '#FFE566' },
-                        }
-                      : {
-                          color: '#FFFFFF',
-                          '&:hover': { bgcolor: 'rgba(251,208,0,0.15)', color: '#FBD000' },
-                        }
-                  }
+                  sx={{
+                    borderRadius: 2,
+                    px: 1.5,
+                    color: t.muted,
+                    '&:hover': { color: t.text, bgcolor: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(9,9,11,0.04)' },
+                  }}
                 >
-                  <ListItemText
-                    primary={item.label}
-                    primaryTypographyProps={{
-                      fontFamily: '"Press Start 2P", monospace',
-                      fontSize: '0.6rem',
-                      fontWeight: item.href === '#contacto' ? 400 : 400,
-                      textAlign: item.href === '#contacto' ? 'center' : 'left',
-                    }}
-                  />
+                  <ListItemText primary={item.label} primaryTypographyProps={{ fontSize: '0.92rem', fontWeight: 500 }} />
                 </ListItemButton>
               </ListItem>
             ))}
           </List>
 
-          <Box sx={{ p: 2, mt: 'auto', borderTop: '2px solid #FBD000', position: 'absolute', bottom: 0, left: 0, right: 0 }}>
-            <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.5)', display: 'block', textAlign: 'center' }}>
-              INSERT COIN ▶
-            </Typography>
-          </Box>
+          {contact && (
+            <Box sx={{ p: 2.5, borderTop: `1px solid ${t.border}` }}>
+              <Button fullWidth variant="contained" onClick={() => handleNav(contact.href)}>
+                Contactar
+              </Button>
+              <Typography sx={{ mt: 1.5, textAlign: 'center', fontFamily: fonts.mono, fontSize: '0.7rem', color: t.subtle }}>
+                Tech Lead · Arquitecto de Soluciones
+              </Typography>
+            </Box>
+          )}
         </Box>
       </Drawer>
     </>

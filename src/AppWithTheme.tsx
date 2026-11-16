@@ -1,11 +1,11 @@
 import App from './App';
-import { MarioThemeProvider } from './context/ThemeContext';
-import './styles/mario-animations.css';
+import { ThemeModeProvider } from './context/ThemeContext';
+import './styles/animations.css';
 
 export default function AppWithTheme() {
   return (
-    <MarioThemeProvider>
+    <ThemeModeProvider>
       <App />
-    </MarioThemeProvider>
+    </ThemeModeProvider>
   );
 }

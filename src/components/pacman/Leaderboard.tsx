@@ -2,7 +2,6 @@ import { useCallback, useEffect, useState } from 'react';
 import {
   Box,
   CircularProgress,
-  Paper,
   Table,
   TableBody,
   TableCell,
@@ -12,7 +11,8 @@ import {
   Typography,
 } from '@mui/material';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
-import { glassCard } from '../../theme/theme';
+import { surfaceCard } from '../../theme/theme';
+import { useThemeMode } from '../../context/ThemeContext';
 import {
   getTopScores,
   isLeaderboardAvailable,
@@ -33,6 +33,7 @@ function formatDate(date: Date | null): string {
 }
 
 export default function Leaderboard({ refreshKey = 0 }: LeaderboardProps) {
+  const { tokens: t } = useThemeMode();
   const [scores, setScores] = useState<ScoreEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -61,10 +62,10 @@ export default function Leaderboard({ refreshKey = 0 }: LeaderboardProps) {
   }, [load, refreshKey]);
 
   return (
-    <Paper elevation={0} sx={{ ...glassCard, p: 3, borderRadius: 4, height: '100%' }}>
+    <Box sx={{ ...surfaceCard(t), p: 3, height: '100%' }}>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
-        <EmojiEventsIcon color="primary" />
-        <Typography variant="h6" fontWeight={700}>
+        <EmojiEventsIcon color="primary" sx={{ fontSize: 20 }} />
+        <Typography variant="h6" sx={{ fontSize: '1rem' }}>
           Top 10
         </Typography>
       </Box>
@@ -121,6 +122,6 @@ export default function Leaderboard({ refreshKey = 0 }: LeaderboardProps) {
           </Table>
         </TableContainer>
       )}
-    </Paper>
+    </Box>
   );
 }

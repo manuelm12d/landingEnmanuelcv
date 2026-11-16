@@ -1,28 +1,32 @@
-import React, { createContext, useContext, useState, useMemo } from 'react';
-import { ThemeProvider, CssBaseline } from '@mui/material';
-import { getMarioTheme } from '../theme/theme';
+import React, { createContext, useContext, useMemo, useState } from 'react';
+import { CssBaseline, ThemeProvider } from '@mui/material';
+import { getAppTheme, getTokens, type Tokens } from '../theme/theme';
 
 type ThemeMode = 'light' | 'dark';
 
-interface MarioThemeContextValue {
+const STORAGE_KEY = 'theme-mode';
+
+interface ThemeModeContextValue {
   mode: ThemeMode;
+  tokens: Tokens;
   toggleTheme: () => void;
 }
 
-const MarioThemeContext = createContext<MarioThemeContextValue>({
+const ThemeModeContext = createContext<ThemeModeContextValue>({
   mode: 'dark',
+  tokens: getTokens('dark'),
   toggleTheme: () => {},
 });
 
-export function useMarioTheme() {
-  return useContext(MarioThemeContext);
+export function useThemeMode() {
+  return useContext(ThemeModeContext);
 }
 
-export function MarioThemeProvider({ children }: { children: React.ReactNode }) {
+export function ThemeModeProvider({ children }: { children: React.ReactNode }) {
   const [mode, setMode] = useState<ThemeMode>(() => {
     try {
-      const saved = localStorage.getItem('mario-theme-mode');
-      return (saved === 'light' || saved === 'dark') ? saved : 'dark';
+      const saved = localStorage.getItem(STORAGE_KEY);
+      return saved === 'light' || saved === 'dark' ? saved : 'dark';
     } catch {
       return 'dark';
     }
@@ -32,20 +36,21 @@ export function MarioThemeProvider({ children }: { children: React.ReactNode }) 
     setMode((prev) => {
       const next: ThemeMode = prev === 'dark' ? 'light' : 'dark';
       try {
-        localStorage.setItem('mario-theme-mode', next);
+        localStorage.setItem(STORAGE_KEY, next);
       } catch {}
       return next;
     });
   };
 
-  const theme = useMemo(() => getMarioTheme(mode), [mode]);
+  const theme = useMemo(() => getAppTheme(mode), [mode]);
+  const tokens = useMemo(() => getTokens(mode), [mode]);
 
   return (
-    <MarioThemeContext.Provider value={{ mode, toggleTheme }}>
+    <ThemeModeContext.Provider value={{ mode, tokens, toggleTheme }}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
         {children}
       </ThemeProvider>
-    </MarioThemeContext.Provider>
+    </ThemeModeContext.Provider>
   );
 }

@@ -1,49 +1,26 @@
-import {
-  Box,
-  Button,
-  Chip,
-  Container,
-  Grid2 as Grid,
-  Stack,
-  Typography,
-} from '@mui/material';
-import EmailIcon from '@mui/icons-material/Email';
+import { Box, Button, Container, Grid2 as Grid, Stack, Typography } from '@mui/material';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { profile } from '../data/profile';
-import { marioGradientText, questionBlock } from '../theme/theme';
+import { accent, fonts, glowCard } from '../theme/theme';
+import { useThemeMode } from '../context/ThemeContext';
+import { useTypewriter } from '../hooks/useTypewriter';
 import ProfileAvatar from './ProfileAvatar';
-import { useMarioTheme } from '../context/ThemeContext';
+import Reveal from './Reveal';
 
-// Sprites flotantes decorativos
-const FloatingSprite = ({ emoji, style }: { emoji: string; style: React.CSSProperties }) => (
-  <Box
-    component="span"
-    aria-hidden
-    sx={{
-      position: 'absolute',
-      fontSize: { xs: '1.2rem', md: '1.5rem' },
-      userSelect: 'none',
-      pointerEvents: 'none',
-      zIndex: 0,
-      lineHeight: 1,
-      ...style,
-    }}
-    className="mario-float"
-  >
-    {emoji}
-  </Box>
-);
+const ROLES = [
+  'Tech Lead',
+  'Arquitecto de Soluciones',
+  'Ingeniero Full-Stack',
+  'Especialista Cloud & DevOps',
+];
 
 export default function Hero() {
-  const { mode } = useMarioTheme();
-  const isLight = mode === 'light';
+  const { tokens: t } = useThemeMode();
+  const role = useTypewriter(ROLES);
 
   const scrollTo = (id: string) => {
     document.querySelector(id)?.scrollIntoView({ behavior: 'smooth' });
   };
-
-  const skyBg = isLight
-    ? 'linear-gradient(180deg, #5C94FC 0%, #7CB4FF 60%, #98CBF8 100%)'
-    : 'linear-gradient(180deg, #0D0D1A 0%, #1A1A2E 70%, #0D0D1A 100%)';
 
   return (
     <Box
@@ -51,194 +28,170 @@ export default function Hero() {
       component="section"
       sx={{
         position: 'relative',
-        pt: { xs: 14, md: 18 },
+        pt: { xs: 16, md: 22 },
         pb: { xs: 10, md: 14 },
         overflow: 'hidden',
-        background: skyBg,
+        bgcolor: t.bg,
       }}
     >
-      {/* Nubes decorativas (modo claro) / Estrellas (modo oscuro) */}
-      {isLight ? (
-        <>
-          <FloatingSprite emoji="☁️" style={{ top: '15%', left: '5%', fontSize: '2rem' }} />
-          <FloatingSprite emoji="☁️" style={{ top: '10%', left: '25%', fontSize: '1.5rem' }} />
-          <FloatingSprite emoji="☁️" style={{ top: '20%', right: '15%', fontSize: '2.5rem' }} />
-          <FloatingSprite emoji="☁️" style={{ top: '8%',  right: '35%', fontSize: '1.2rem' }} />
-        </>
-      ) : (
-        <>
-          <FloatingSprite emoji="⭐" style={{ top: '12%', left: '8%',  animationDelay: '0s' }} />
-          <FloatingSprite emoji="⭐" style={{ top: '20%', left: '30%', animationDelay: '0.5s' }} />
-          <FloatingSprite emoji="⭐" style={{ top: '8%',  right: '20%', animationDelay: '1s' }} />
-          <FloatingSprite emoji="🌙" style={{ top: '5%',  right: '5%',  fontSize: '2rem', animationDelay: '0.3s' }} />
-        </>
-      )}
-
-      {/* Sprites de items flotantes */}
-      <FloatingSprite emoji="🍄" style={{ top: '55%', left: '2%',   animationDelay: '0.8s', fontSize: '1rem' }} />
-      <FloatingSprite emoji="🪙" style={{ top: '30%', right: '3%',  animationDelay: '1.2s', fontSize: '1rem' }} />
-      <FloatingSprite emoji="🌟" style={{ bottom: '20%', left: '6%', animationDelay: '0.4s', fontSize: '1rem' }} />
-
-      <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1 }}>
-        <Grid container spacing={6} alignItems="center">
-          <Grid size={{ xs: 12, md: 7 }}>
-            {/* Badge estilo moneda */}
-            <Chip
-              label="⭐  8+ años construyendo software de alto impacto"
-              sx={{
-                mb: 3,
-                bgcolor: '#FBD000',
-                color: '#1A0A00',
-                border: '2px solid #8B4513',
-                fontFamily: '"Press Start 2P", monospace',
-                fontSize: '0.45rem',
-                height: 'auto',
-                py: 0.8,
-                '& .MuiChip-label': { whiteSpace: 'normal' },
-              }}
-            />
-
-            <Typography
-              variant="h2"
-              component="h1"
-              sx={{
-                fontSize: { xs: '1rem', md: '1.5rem' },
-                mb: 1.5,
-                color: isLight ? '#1A0A00' : '#F5F5F5',
-                textShadow: isLight ? '2px 2px 0 #C8821A' : '2px 2px 0 #E52521',
-              }}
-            >
-              {profile.name}
-            </Typography>
-
-            <Typography
-              variant="h4"
-              sx={{
-                ...marioGradientText,
-                fontSize: { xs: '0.7rem', md: '0.9rem' },
-                mb: 2,
-              }}
-            >
-              {profile.title}
-            </Typography>
-
-            <Typography
-              variant="h6"
-              sx={{
-                fontSize: { xs: '0.6rem', md: '0.7rem' },
-                mb: 2,
-                color: isLight ? '#5C3317' : '#A0A0C0',
-              }}
-            >
-              {profile.subtitle}
-            </Typography>
-
-            <Typography
-              variant="body1"
-              color="text.secondary"
-              sx={{ maxWidth: 620, mb: 4, lineHeight: 1.8, fontFamily: '"Roboto", sans-serif' }}
-            >
-              Especialista en arquitecturas escalables, migraciones legacy, cloud multiplataforma y equipos
-              orientados a resultados. De APIs gubernamentales a apps móviles en Play Store — experiencia
-              comprobada en sectores financiero, logístico y empresarial.
-            </Typography>
-
-            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-              <Button
-                variant="contained"
-                size="large"
-                startIcon={<EmailIcon />}
-                onClick={() => scrollTo('#contacto')}
-              >
-                ► Contactar
-              </Button>
-              <Button
-                variant="outlined"
-                size="large"
-                onClick={() => scrollTo('#experiencia')}
-              >
-                Mi experiencia
-              </Button>
-            </Stack>
-          </Grid>
-
-          <Grid size={{ xs: 12, md: 5 }}>
-            <Stack alignItems="center" spacing={4} sx={{ pt: { xs: 2, md: 0 } }}>
-              <ProfileAvatar />
-
-              {/* Stat cards — Bloques ? de Mario */}
-              <Box
-                sx={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(2, 1fr)',
-                  gap: 2,
-                  width: '100%',
-                }}
-              >
-                {profile.stats.map((stat) => (
-                  <Box
-                    key={stat.label}
-                    sx={{
-                      ...questionBlock,
-                      p: 2.5,
-                      textAlign: 'center',
-                      cursor: 'default',
-                      transition: 'transform 0.15s ease, box-shadow 0.15s ease',
-                      '@media (hover: hover)': {
-                        '&:hover': {
-                          transform: 'translateY(-8px)',
-                          boxShadow: '4px 12px 0 #5C2E0A, inset 0 2px 0 rgba(255,255,255,0.4)',
-                          animation: 'shake 0.4s ease',
-                        },
-                      },
-                    }}
-                  >
-                    <Typography
-                      variant="h3"
-                      sx={{
-                        color: '#E52521',
-                        textShadow: '2px 2px 0 #8B0000',
-                        fontSize: { xs: '1rem', md: '1.3rem' },
-                        mb: 0.5,
-                      }}
-                    >
-                      {stat.value}
-                    </Typography>
-                    <Typography
-                      variant="caption"
-                      sx={{
-                        color: '#5C2E0A',
-                        display: 'block',
-                        fontFamily: '"Press Start 2P", monospace',
-                        fontSize: '0.4rem',
-                        lineHeight: 1.5,
-                      }}
-                    >
-                      {stat.label}
-                    </Typography>
-                  </Box>
-                ))}
-              </Box>
-            </Stack>
-          </Grid>
-        </Grid>
-      </Container>
-
-      {/* Suelo/Plataforma decorativa */}
+      {/* Grid de fondo con máscara */}
       <Box
         aria-hidden
         sx={{
           position: 'absolute',
-          bottom: 0,
-          left: 0,
-          right: 0,
-          height: 12,
-          background: isLight
-            ? 'repeating-linear-gradient(90deg, #C8821A 0px, #C8821A 30px, #A0621A 30px, #A0621A 32px)'
-            : 'repeating-linear-gradient(90deg, #2A1A3E 0px, #2A1A3E 30px, #1A0A2E 30px, #1A0A2E 32px)',
-          borderTop: '3px solid #FBD000',
+          inset: 0,
+          backgroundImage: `linear-gradient(${t.border} 1px, transparent 1px), linear-gradient(90deg, ${t.border} 1px, transparent 1px)`,
+          backgroundSize: '64px 64px',
+          maskImage: 'radial-gradient(ellipse 70% 60% at 50% 0%, #000 30%, transparent 75%)',
+          WebkitMaskImage: 'radial-gradient(ellipse 70% 60% at 50% 0%, #000 30%, transparent 75%)',
+          pointerEvents: 'none',
         }}
       />
+      {/* Glow azul tipo "sol" */}
+      <Box
+        aria-hidden
+        sx={{
+          position: 'absolute',
+          top: { xs: -260, md: -360 },
+          left: '50%',
+          width: { xs: 600, md: 1100 },
+          height: { xs: 500, md: 720 },
+          borderRadius: '50%',
+          background: `radial-gradient(closest-side, rgba(37,99,235,${t.isDark ? 0.45 : 0.25}), ${accent.glow} 45%, transparent 100%)`,
+          filter: 'blur(40px)',
+          animation: 'glowPulse 8s ease-in-out infinite',
+          transform: 'translateX(-50%)',
+          pointerEvents: 'none',
+        }}
+      />
+
+      <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1 }}>
+        <Grid container spacing={{ xs: 6, md: 8 }} alignItems="center">
+          <Grid size={{ xs: 12, md: 7 }}>
+            <Reveal>
+              <Box
+                sx={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 1.25,
+                  mb: 4,
+                  px: 1.5,
+                  py: 0.75,
+                  borderRadius: 999,
+                  border: `1px solid ${t.border}`,
+                  bgcolor: t.isDark ? 'rgba(255,255,255,0.03)' : 'rgba(9,9,11,0.02)',
+                  fontSize: '0.8rem',
+                  color: t.muted,
+                }}
+              >
+                <span className="status-dot" />
+                Disponible para nuevos proyectos
+              </Box>
+            </Reveal>
+
+            <Reveal delay={80}>
+              <Typography
+                variant="h1"
+                sx={{
+                  fontSize: 'clamp(2.5rem, 1.6rem + 4vw, 4.5rem)',
+                  color: t.text,
+                  mb: 2.5,
+                }}
+              >
+                Enmanuel Reyes
+                <Box component="span" sx={{ display: 'block', color: t.subtle }}>
+                  Molina.
+                </Box>
+              </Typography>
+            </Reveal>
+
+            <Reveal delay={160}>
+              <Typography
+                component="p"
+                sx={{
+                  fontFamily: fonts.mono,
+                  fontSize: { xs: '1rem', md: '1.15rem' },
+                  color: t.text,
+                  mb: 3,
+                  minHeight: '1.6em',
+                }}
+                aria-label={ROLES.join(', ')}
+              >
+                <Box component="span" sx={{ color: accent.main }}>
+                  &gt;
+                </Box>{' '}
+                {role}
+                <span className="typewriter-caret" aria-hidden />
+              </Typography>
+            </Reveal>
+
+            <Reveal delay={240}>
+              <Typography variant="body1" sx={{ color: t.muted, maxWidth: 560, mb: 5, fontSize: '1.08rem' }}>
+                {profile.title}. Diseño arquitecturas escalables, lidero migraciones legacy y despliego en AWS, Google
+                Cloud y Azure — con experiencia en sectores financiero, logístico, gubernamental y empresarial.
+              </Typography>
+            </Reveal>
+
+            <Reveal delay={320}>
+              <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5}>
+                <Button
+                  variant="contained"
+                  size="large"
+                  endIcon={<ArrowForwardIcon sx={{ fontSize: 18 }} />}
+                  onClick={() => scrollTo('#contacto')}
+                >
+                  Hablemos
+                </Button>
+                <Button variant="outlined" size="large" onClick={() => scrollTo('#experiencia')}>
+                  Ver experiencia
+                </Button>
+              </Stack>
+            </Reveal>
+          </Grid>
+
+          <Grid size={{ xs: 12, md: 5 }}>
+            <Reveal delay={200}>
+              <ProfileAvatar />
+            </Reveal>
+          </Grid>
+        </Grid>
+
+        <Box
+          sx={{
+            mt: { xs: 8, md: 12 },
+            display: 'grid',
+            gridTemplateColumns: { xs: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' },
+            gap: 2,
+          }}
+        >
+          {profile.stats.map((stat, i) => (
+            <Reveal key={stat.label} delay={i * 80}>
+              <Box
+                sx={{
+                  ...glowCard(t),
+                  p: { xs: 2.5, md: 3 },
+                  height: '100%',
+                  bgcolor: t.isDark ? 'rgba(18,18,20,0.6)' : 'rgba(250,250,250,0.8)',
+                  backdropFilter: 'blur(8px)',
+                }}
+              >
+                <Typography
+                  sx={{
+                    fontSize: { xs: '1.75rem', md: '2.25rem' },
+                    fontWeight: 700,
+                    letterSpacing: '-0.04em',
+                    color: t.text,
+                    lineHeight: 1.1,
+                  }}
+                >
+                  {stat.value}
+                </Typography>
+                <Typography sx={{ mt: 0.75, fontSize: '0.85rem', color: t.muted }}>{stat.label}</Typography>
+              </Box>
+            </Reveal>
+          ))}
+        </Box>
+      </Container>
     </Box>
   );
 }

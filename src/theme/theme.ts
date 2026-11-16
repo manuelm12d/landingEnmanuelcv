@@ -1,95 +1,166 @@
 import { createTheme, type PaletteMode } from '@mui/material/styles';
 
 // ============================================================
-//  Mario Bros Theme — landingenma
-//  Dos modos: 'light' (World 1-1 / Día) · 'dark' (Castillo / Noche)
+//  Deep Tech · Vercel / Stripe / Linear
+//  Dark:  Zinc #09090B + Surface #121214 + Blue #2563EB
+//  Light: White #FFFFFF + Surface #FAFAFA + Blue #2563EB
 // ============================================================
 
-export function getMarioTheme(mode: PaletteMode) {
-  const isLight = mode === 'light';
+export const accent = {
+  main: '#2563EB',
+  hover: '#3B82F6',
+  soft: 'rgba(37,99,235,0.12)',
+  glow: 'rgba(37,99,235,0.15)',
+  ring: 'rgba(37,99,235,0.4)',
+  success: '#22C55E',
+};
+
+export const fonts = {
+  sans: '"Inter", "Helvetica Neue", "Helvetica", "Arial", sans-serif',
+  mono: '"JetBrains Mono", "SFMono-Regular", "Menlo", "Consolas", monospace',
+};
+
+export interface Tokens {
+  isDark: boolean;
+  bg: string;
+  surface: string;
+  surfaceHover: string;
+  border: string;
+  borderStrong: string;
+  text: string;
+  muted: string;
+  subtle: string;
+}
+
+export function getTokens(mode: PaletteMode): Tokens {
+  const isDark = mode === 'dark';
+  return isDark
+    ? {
+        isDark,
+        bg: '#09090B',
+        surface: '#121214',
+        surfaceHover: '#18181B',
+        border: 'rgba(255,255,255,0.08)',
+        borderStrong: 'rgba(255,255,255,0.16)',
+        text: '#F8FAFC',
+        muted: '#A1A1AA',
+        subtle: '#71717A',
+      }
+    : {
+        isDark,
+        bg: '#FFFFFF',
+        surface: '#FAFAFA',
+        surfaceHover: '#F4F4F5',
+        border: 'rgba(9,9,11,0.08)',
+        borderStrong: 'rgba(9,9,11,0.16)',
+        text: '#09090B',
+        muted: '#52525B',
+        subtle: '#A1A1AA',
+      };
+}
+
+export function getAppTheme(mode: PaletteMode) {
+  const t = getTokens(mode);
 
   return createTheme({
     palette: {
       mode,
       primary: {
-        main:  '#E52521',   // Rojo Mario
-        light: '#FF6B6B',
-        dark:  '#8B0000',
+        main: accent.main,
+        light: accent.hover,
+        dark: '#1D4ED8',
         contrastText: '#FFFFFF',
       },
       secondary: {
-        main:  '#FBD000',   // Moneda/Estrella dorada
-        light: '#FFE566',
-        dark:  '#C8821A',   // Tierra
-        contrastText: '#1A0A00',
+        main: t.text,
+        contrastText: t.bg,
       },
       background: {
-        default: isLight ? '#5C94FC' : '#0D0D1A',   // Cielo / Noche castillo
-        paper:   isLight ? '#E8D5A3' : '#1A1A2E',   // Tierra / Piedra castillo
+        default: t.bg,
+        paper: t.surface,
       },
       text: {
-        primary:   isLight ? '#1A0A00' : '#F5F5F5',
-        secondary: isLight ? '#5C3317' : '#A0A0C0',
+        primary: t.text,
+        secondary: t.muted,
+        disabled: t.subtle,
       },
-      divider: isLight ? '#C8821A' : '#3A2A5A',
-      success: { main: '#4CAF22' },   // Verde tubería Luigi
-      warning: { main: '#FF6600' },   // Bola de fuego
-      error:   { main: '#E52521' },
+      divider: t.border,
+      success: { main: accent.success },
+      warning: { main: '#F59E0B' },
+      error: { main: '#EF4444' },
     },
 
     typography: {
-      fontFamily: '"Press Start 2P", "Roboto", "Arial", sans-serif',
-      h1: { fontFamily: '"Press Start 2P", monospace', fontWeight: 400, fontSize: '2rem',   letterSpacing: '0.02em', lineHeight: 1.6 },
-      h2: { fontFamily: '"Press Start 2P", monospace', fontWeight: 400, fontSize: '1.5rem', letterSpacing: '0.02em', lineHeight: 1.6 },
-      h3: { fontFamily: '"Press Start 2P", monospace', fontWeight: 400, fontSize: '1.2rem', letterSpacing: '0.02em', lineHeight: 1.6 },
-      h4: { fontFamily: '"Press Start 2P", monospace', fontWeight: 400, fontSize: '1rem',   letterSpacing: '0.02em', lineHeight: 1.6 },
-      h5: { fontFamily: '"Press Start 2P", monospace', fontWeight: 400, fontSize: '0.85rem', lineHeight: 1.7 },
-      h6: { fontFamily: '"Press Start 2P", monospace', fontWeight: 400, fontSize: '0.75rem', lineHeight: 1.7 },
-      body1: { fontFamily: '"Roboto", "Arial", sans-serif', fontSize: '1rem',   lineHeight: 1.8 },
-      body2: { fontFamily: '"Roboto", "Arial", sans-serif', fontSize: '0.875rem', lineHeight: 1.7 },
-      caption: { fontFamily: '"Press Start 2P", monospace', fontSize: '0.6rem', letterSpacing: '0.05em' },
-      overline: { fontFamily: '"Press Start 2P", monospace', fontSize: '0.6rem', letterSpacing: '0.1em', lineHeight: 2 },
-      button: { fontFamily: '"Press Start 2P", monospace', fontSize: '0.65rem', textTransform: 'uppercase', letterSpacing: '0.05em' },
+      fontFamily: fonts.sans,
+      h1: { fontWeight: 700, letterSpacing: '-0.04em', lineHeight: 1.05 },
+      h2: { fontWeight: 700, letterSpacing: '-0.035em', lineHeight: 1.1 },
+      h3: { fontWeight: 600, letterSpacing: '-0.03em', lineHeight: 1.2 },
+      h4: { fontWeight: 600, letterSpacing: '-0.025em', lineHeight: 1.25 },
+      h5: { fontWeight: 600, letterSpacing: '-0.02em' },
+      h6: { fontWeight: 600, letterSpacing: '-0.015em' },
+      body1: { lineHeight: 1.7 },
+      body2: { lineHeight: 1.6 },
+      overline: { fontFamily: fonts.mono, letterSpacing: '0.08em', fontWeight: 500 },
+      button: { textTransform: 'none', fontWeight: 500, letterSpacing: '-0.01em' },
     },
 
-    shape: { borderRadius: 0 },
+    shape: { borderRadius: 8 },
 
     components: {
       MuiCssBaseline: {
         styleOverrides: {
+          ':root': {
+            '--bg': t.bg,
+            '--surface': t.surface,
+            '--border': t.border,
+            '--border-strong': t.borderStrong,
+            '--text': t.text,
+            '--muted': t.muted,
+            '--accent': accent.main,
+            '--accent-hover': accent.hover,
+          },
+          html: { scrollBehavior: 'smooth' },
           body: {
-            backgroundImage: isLight
-              ? `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64'%3E%3Crect width='64' height='64' fill='%235C94FC'/%3E%3Crect x='0' y='48' width='64' height='16' fill='%234CAF22'/%3E%3C/svg%3E")`
-              : 'none',
+            backgroundColor: t.bg,
+            overflowX: 'hidden',
+            WebkitFontSmoothing: 'antialiased',
+            MozOsxFontSmoothing: 'grayscale',
+            fontFeatureSettings: '"cv11", "ss01", "ss03"',
           },
         },
       },
 
       MuiButton: {
+        defaultProps: { disableElevation: true },
         styleOverrides: {
           root: {
-            borderRadius: 0,
-            border: '3px solid transparent',
-            transition: 'transform 0.1s ease, box-shadow 0.1s ease',
-            '&:hover': { transform: 'translateY(-3px)', boxShadow: '0 6px 0 rgba(0,0,0,0.4)' },
-            '&:active': { transform: 'translateY(1px)',  boxShadow: '0 2px 0 rgba(0,0,0,0.4)' },
+            borderRadius: 8,
+            padding: '9px 18px',
+            fontSize: '0.9rem',
+            transition: 'background-color .2s ease, box-shadow .2s ease, border-color .2s ease, color .2s ease',
           },
+          sizeLarge: { padding: '11px 22px', fontSize: '0.95rem' },
+          sizeSmall: { padding: '6px 12px', fontSize: '0.82rem' },
           contained: {
-            backgroundColor: '#E52521',
+            backgroundColor: accent.main,
             color: '#FFFFFF',
-            border: '3px solid #8B0000',
-            boxShadow: '0 4px 0 #8B0000',
-            '&:hover': { backgroundColor: '#FF4441', boxShadow: '0 6px 0 #8B0000' },
+            '&:hover': {
+              backgroundColor: accent.hover,
+              boxShadow: `0 0 20px ${accent.ring}`,
+            },
           },
           outlined: {
-            borderColor: '#FBD000',
-            color: isLight ? '#1A0A00' : '#FBD000',
-            borderWidth: '3px',
-            '&:hover': { borderWidth: '3px', backgroundColor: 'rgba(251,208,0,0.12)' },
+            borderColor: t.borderStrong,
+            color: t.text,
+            backgroundColor: 'transparent',
+            '&:hover': {
+              borderColor: t.isDark ? 'rgba(255,255,255,0.32)' : 'rgba(9,9,11,0.32)',
+              backgroundColor: t.isDark ? 'rgba(255,255,255,0.04)' : 'rgba(9,9,11,0.03)',
+            },
           },
           text: {
-            color: isLight ? '#1A0A00' : '#F5F5F5',
-            '&:hover': { backgroundColor: 'rgba(251,208,0,0.15)', color: '#FBD000' },
+            color: t.muted,
+            '&:hover': { color: t.text, backgroundColor: 'transparent' },
           },
         },
       },
@@ -97,15 +168,10 @@ export function getMarioTheme(mode: PaletteMode) {
       MuiChip: {
         styleOverrides: {
           root: {
-            borderRadius: 0,
-            fontFamily: '"Press Start 2P", monospace',
-            fontSize: '0.5rem',
-            border: '2px solid',
-          },
-          colorPrimary: {
-            backgroundColor: '#E52521',
-            borderColor: '#8B0000',
-            color: '#FFFFFF',
+            borderRadius: 6,
+            fontWeight: 500,
+            fontSize: '0.75rem',
+            fontFamily: fonts.mono,
           },
         },
       },
@@ -114,42 +180,38 @@ export function getMarioTheme(mode: PaletteMode) {
         styleOverrides: {
           root: {
             backgroundImage: 'none',
-            border: `3px solid ${isLight ? '#C8821A' : '#3A2A5A'}`,
+            backgroundColor: t.surface,
+            border: `1px solid ${t.border}`,
           },
         },
       },
 
       MuiAppBar: {
         styleOverrides: {
-          root: {
-            backgroundImage: 'none',
-          },
+          root: { backgroundImage: 'none', backgroundColor: 'transparent', border: 'none' },
         },
       },
 
       MuiDrawer: {
         styleOverrides: {
           paper: {
-            backgroundColor: isLight ? '#8B0000' : '#1A0A1A',
-            borderLeft: '4px solid #FBD000',
+            backgroundColor: t.bg,
+            border: 'none',
+            borderLeft: `1px solid ${t.border}`,
           },
         },
       },
 
       MuiDivider: {
-        styleOverrides: {
-          root: {
-            borderColor: isLight ? '#C8821A' : '#3A2A5A',
-          },
-        },
+        styleOverrides: { root: { borderColor: t.border } },
       },
 
       MuiIconButton: {
         styleOverrides: {
           root: {
-            borderRadius: 0,
-            transition: 'transform 0.15s ease',
-            '&:hover': { transform: 'scale(1.15)', backgroundColor: 'rgba(251,208,0,0.2)' },
+            borderRadius: 8,
+            transition: 'color .2s ease, background-color .2s ease',
+            '&:hover': { backgroundColor: t.isDark ? 'rgba(255,255,255,0.06)' : 'rgba(9,9,11,0.05)' },
           },
         },
       },
@@ -157,12 +219,20 @@ export function getMarioTheme(mode: PaletteMode) {
       MuiTooltip: {
         styleOverrides: {
           tooltip: {
-            fontFamily: '"Press Start 2P", monospace',
-            fontSize: '0.5rem',
-            backgroundColor: '#1A0A00',
-            border: '2px solid #FBD000',
-            borderRadius: 0,
+            backgroundColor: t.isDark ? '#18181B' : '#09090B',
+            color: '#F8FAFC',
+            border: `1px solid ${t.isDark ? 'rgba(255,255,255,0.1)' : 'transparent'}`,
+            borderRadius: 6,
+            fontSize: '0.75rem',
+            fontWeight: 500,
           },
+        },
+      },
+
+      MuiTableCell: {
+        styleOverrides: {
+          root: { borderColor: t.border },
+          head: { color: t.muted, fontFamily: fonts.mono, fontSize: '0.72rem', textTransform: 'uppercase' },
         },
       },
     },
@@ -171,43 +241,28 @@ export function getMarioTheme(mode: PaletteMode) {
 
 // ── Helpers de estilo reutilizables ──────────────────────────
 
-export const marioGradientText = {
-  background: 'linear-gradient(135deg, #E52521 0%, #FBD000 60%, #FF6600 100%)',
-  WebkitBackgroundClip: 'text',
-  WebkitTextFillColor: 'transparent',
-  backgroundClip: 'text',
-};
-
-export const marioCard = (isLight: boolean) => ({
-  background: isLight ? 'rgba(232, 213, 163, 0.92)' : 'rgba(26, 26, 46, 0.92)',
-  border: `3px solid ${isLight ? '#C8821A' : '#3A2A5A'}`,
-  boxShadow: `4px 4px 0 ${isLight ? '#8B4513' : '#000000'}`,
-  borderRadius: 0,
+export const surfaceCard = (t: Tokens) => ({
+  position: 'relative' as const,
+  backgroundColor: t.surface,
+  border: `1px solid ${t.border}`,
+  borderRadius: '12px',
+  transition: 'border-color .25s ease, box-shadow .25s ease, background-color .25s ease',
 });
 
-export const marioBrick = (isLight: boolean) => ({
-  background: isLight
-    ? 'repeating-linear-gradient(90deg, #C8821A 0px, #C8821A 30px, #A0621A 30px, #A0621A 32px), repeating-linear-gradient(180deg, transparent 0px, transparent 14px, #A0621A 14px, #A0621A 16px)'
-    : 'repeating-linear-gradient(90deg, #2A1A3E 0px, #2A1A3E 30px, #1A0A2E 30px, #1A0A2E 32px), repeating-linear-gradient(180deg, transparent 0px, transparent 14px, #1A0A2E 14px, #1A0A2E 16px)',
-  border: `3px solid ${isLight ? '#8B4513' : '#3A2A5A'}`,
-  boxShadow: `4px 4px 0 ${isLight ? '#5C2E0A' : '#000'}`,
+export const glowCard = (t: Tokens) => ({
+  ...surfaceCard(t),
+  '&:hover': {
+    borderColor: accent.ring,
+    boxShadow: `0 0 0 1px ${accent.soft}, 0 8px 32px ${accent.glow}`,
+  },
 });
 
-export const questionBlock = {
-  background: 'linear-gradient(135deg, #FFE566 0%, #FBD000 50%, #C8821A 100%)',
-  border: '4px solid #8B4513',
-  boxShadow: '4px 4px 0 #5C2E0A, inset 0 2px 0 rgba(255,255,255,0.3)',
-  borderRadius: 0,
-};
+export const radialTint = (position = '0% 0%', strength = 0.08) =>
+  `radial-gradient(circle at ${position}, rgba(37,99,235,${strength}) 0%, transparent 60%)`;
 
-// Mantener compatibilidad con importaciones antiguas
-export const glassCard = {
-  background: 'rgba(26, 26, 46, 0.92)',
-  border: '3px solid #3A2A5A',
-  boxShadow: '4px 4px 0 #000000',
-};
-
-export const gradientText = marioGradientText;
-
-// Tema estático de respaldo (dark)
-export const theme = getMarioTheme('dark');
+export const monoLabel = (t: Tokens) => ({
+  fontFamily: fonts.mono,
+  fontSize: '0.75rem',
+  color: t.subtle,
+  letterSpacing: '0.02em',
+});

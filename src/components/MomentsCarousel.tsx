@@ -1,21 +1,15 @@
 import { useEffect, useState } from 'react';
-import {
-  Box,
-  CircularProgress,
-  IconButton,
-  Paper,
-  Stack,
-  Typography,
-} from '@mui/material';
+import { Box, CircularProgress, IconButton, Stack, Typography } from '@mui/material';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import PhotoLibraryIcon from '@mui/icons-material/PhotoLibrary';
 import { listCarouselImages } from '../services/storageService';
-import { glassCard } from '../theme/theme';
+import { accent, fonts, glowCard } from '../theme/theme';
+import { useThemeMode } from '../context/ThemeContext';
 
 const AUTO_PLAY_MS = 5000;
 
 export default function MomentsCarousel() {
+  const { tokens: t } = useThemeMode();
   const [images, setImages] = useState<string[]>([]);
   const [activeIndex, setActiveIndex] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -61,67 +55,50 @@ export default function MomentsCarousel() {
     setActiveIndex((index + images.length) % images.length);
   };
 
+  const navButtonSx = {
+    position: 'absolute',
+    top: '50%',
+    transform: 'translateY(-50%)',
+    color: '#F8FAFC',
+    bgcolor: 'rgba(9,9,11,0.6)',
+    border: '1px solid rgba(255,255,255,0.12)',
+    backdropFilter: 'blur(8px)',
+    '&:hover': { bgcolor: 'rgba(9,9,11,0.85)' },
+  } as const;
+
   return (
-    <Paper
-      elevation={0}
-      sx={{
-        ...glassCard,
-        p: { xs: 2.5, md: 3 },
-        borderRadius: 4,
-        height: '100%',
-        display: 'flex',
-        flexDirection: 'column',
-      }}
-    >
-      <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 2 }}>
-        <PhotoLibraryIcon color="primary" />
-        <Box>
-          <Typography variant="overline" color="primary" fontWeight={700} sx={{ lineHeight: 1.2 }}>
-            Galería
+    <Box sx={{ ...glowCard(t), p: { xs: 2, md: 2.5 }, height: '100%', display: 'flex', flexDirection: 'column' }}>
+      <Stack direction="row" justifyContent="space-between" alignItems="baseline" sx={{ mb: 2, px: 0.5 }}>
+        <Typography variant="h6" sx={{ fontSize: '1rem', color: t.text }}>
+          Momentos importantes
+        </Typography>
+        {images.length > 0 && (
+          <Typography sx={{ fontFamily: fonts.mono, fontSize: '0.72rem', color: t.subtle }}>
+            {String(activeIndex + 1).padStart(2, '0')} / {String(images.length).padStart(2, '0')}
           </Typography>
-          <Typography variant="h6" sx={{ lineHeight: 1.2 }}>
-            Momentos importantes
-          </Typography>
-        </Box>
+        )}
       </Stack>
 
       <Box
         sx={{
           position: 'relative',
           flex: 1,
-          minHeight: { xs: 200, sm: 220, md: 240 },
-          borderRadius: 3,
+          minHeight: { xs: 220, md: 260 },
+          borderRadius: '8px',
           overflow: 'hidden',
-          bgcolor: 'rgba(15, 23, 42, 0.6)',
-          border: '1px solid rgba(148, 163, 184, 0.1)',
+          bgcolor: t.isDark ? '#09090B' : '#F4F4F5',
+          border: `1px solid ${t.border}`,
         }}
       >
         {loading && (
-          <Box
-            sx={{
-              position: 'absolute',
-              inset: 0,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            <CircularProgress size={32} />
+          <Box sx={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <CircularProgress size={28} />
           </Box>
         )}
 
         {!loading && error && (
-          <Box
-            sx={{
-              position: 'absolute',
-              inset: 0,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              px: 2,
-            }}
-          >
-            <Typography variant="body2" color="text.secondary" textAlign="center">
+          <Box sx={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', px: 2 }}>
+            <Typography sx={{ fontFamily: fonts.mono, fontSize: '0.78rem', color: t.subtle, textAlign: 'center' }}>
               {error}
             </Typography>
           </Box>
@@ -143,41 +120,17 @@ export default function MomentsCarousel() {
                 height: '100%',
                 objectFit: 'cover',
                 opacity: index === activeIndex ? 1 : 0,
-                transition: 'opacity 0.5s ease',
+                transition: 'opacity .6s ease',
               }}
             />
           ))}
 
         {!loading && !error && images.length > 1 && (
           <>
-            <IconButton
-              size="small"
-              onClick={() => goTo(activeIndex - 1)}
-              aria-label="Imagen anterior"
-              sx={{
-                position: 'absolute',
-                top: '50%',
-                left: 8,
-                transform: 'translateY(-50%)',
-                bgcolor: 'rgba(11, 17, 32, 0.65)',
-                '&:hover': { bgcolor: 'rgba(11, 17, 32, 0.85)' },
-              }}
-            >
+            <IconButton size="small" onClick={() => goTo(activeIndex - 1)} aria-label="Imagen anterior" sx={{ ...navButtonSx, left: 10 }}>
               <ChevronLeftIcon fontSize="small" />
             </IconButton>
-            <IconButton
-              size="small"
-              onClick={() => goTo(activeIndex + 1)}
-              aria-label="Imagen siguiente"
-              sx={{
-                position: 'absolute',
-                top: '50%',
-                right: 8,
-                transform: 'translateY(-50%)',
-                bgcolor: 'rgba(11, 17, 32, 0.65)',
-                '&:hover': { bgcolor: 'rgba(11, 17, 32, 0.85)' },
-              }}
-            >
+            <IconButton size="small" onClick={() => goTo(activeIndex + 1)} aria-label="Imagen siguiente" sx={{ ...navButtonSx, right: 10 }}>
               <ChevronRightIcon fontSize="small" />
             </IconButton>
           </>
@@ -185,7 +138,7 @@ export default function MomentsCarousel() {
       </Box>
 
       {!loading && !error && images.length > 1 && (
-        <Stack direction="row" justifyContent="center" spacing={0.75} sx={{ mt: 1.5 }}>
+        <Stack direction="row" justifyContent="center" spacing={0.75} sx={{ mt: 2 }}>
           {images.map((src, index) => (
             <Box
               key={src}
@@ -194,19 +147,19 @@ export default function MomentsCarousel() {
               aria-label={`Ir a imagen ${index + 1}`}
               onClick={() => setActiveIndex(index)}
               sx={{
-                width: index === activeIndex ? 18 : 8,
-                height: 8,
+                width: index === activeIndex ? 20 : 6,
+                height: 6,
                 border: 'none',
-                borderRadius: 4,
+                borderRadius: 3,
                 p: 0,
                 cursor: 'pointer',
-                bgcolor: index === activeIndex ? 'primary.main' : 'rgba(148, 163, 184, 0.35)',
-                transition: 'width 0.25s ease, background-color 0.25s ease',
+                bgcolor: index === activeIndex ? accent.main : t.borderStrong,
+                transition: 'width .25s ease, background-color .25s ease',
               }}
             />
           ))}
         </Stack>
       )}
-    </Paper>
+    </Box>
   );
 }

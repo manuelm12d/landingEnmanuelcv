@@ -50,7 +50,8 @@ export default function GameHUD({ snapshot, onPause }: GameHUDProps) {
           type="button"
           onClick={onPause}
           sx={{
-            border: '1px solid rgba(148, 163, 184, 0.3)',
+            border: '1px solid',
+            borderColor: 'divider',
             borderRadius: 2,
             px: 1.5,
             py: 0.5,
