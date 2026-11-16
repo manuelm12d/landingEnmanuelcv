@@ -1,12 +1,11 @@
-import { CssBaseline, ThemeProvider } from '@mui/material';
-import { theme } from './theme/theme';
 import App from './App';
+import { MarioThemeProvider } from './context/ThemeContext';
+import './styles/mario-animations.css';
 
 export default function AppWithTheme() {
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
+    <MarioThemeProvider>
       <App />
-    </ThemeProvider>
+    </MarioThemeProvider>
   );
 }
